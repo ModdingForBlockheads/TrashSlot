@@ -22,5 +22,7 @@
   "trashslot.hint.deletedWhileHidden": "Item trashed!",
   "trashslot.hint.deletionDenied": "Item cannot be trashed!",
   "trashslot.hint.locked": "Trash slot locked. Press %s to unlock it.",
-  "trashslot.hint.unlocked": "Trash slot unlocked. Press %s to lock it."
+  "trashslot.hint.unlocked": "Trash slot unlocked. Press %s to lock it.",
+  "tooltip.trashslot.destroy_item": "Destroy Item",
+  "tooltip.trashslot.trash_item": "Trash Item"
 }

@@ -245,7 +245,8 @@ public class TrashSlotGuiHandler {
                     hintMessage.withStyle(ChatFormatting.GOLD);
                     showHint(Hints.LOCKED, hintMessage, 5000, true);
                 } else {
-                    var hintMessage = Component.translatable("trashslot.hint.unlocked", ModKeyMappings.keyBindToggleSlotLock.getBinding().key().getDisplayName());
+                    var hintMessage = Component.translatable("trashslot.hint.unlocked",
+                            ModKeyMappings.keyBindToggleSlotLock.getBinding().key().getDisplayName());
                     hintMessage.withStyle(ChatFormatting.GOLD);
                     showHint(Hints.UNLOCKED, hintMessage, 5000, true);
                 }
@@ -305,8 +306,24 @@ public class TrashSlotGuiHandler {
             }
 
             boolean isMouseSlot = screenAccessor.callIsHovering(trashSlot, event.getMouseX(), event.getMouseY());
-            if (isMouseSlot && screen.getMenu().getCarried().isEmpty() && trashSlot.hasItem()) {
-                event.getGuiGraphics().renderTooltip(Minecraft.getInstance().font, trashSlot.getItem(), event.getMouseX(), event.getMouseY());
+            if (isMouseSlot) {
+                if (screen.getMenu().getCarried().isEmpty() && trashSlot.hasItem()) {
+                    event.getGuiGraphics().renderTooltip(Minecraft.getInstance().font, trashSlot.getItem(), event.getMouseX(), event.getMouseY());
+                } else {
+                    if (TrashSlotConfig.getActive().instantDeletion) {
+                        event.getGuiGraphics()
+                                .renderTooltip(Minecraft.getInstance().font,
+                                        Component.translatable("tooltip.trashslot.destroy_item"),
+                                        event.getMouseX(),
+                                        event.getMouseY());
+                    } else {
+                        event.getGuiGraphics()
+                                .renderTooltip(Minecraft.getInstance().font,
+                                        Component.translatable("tooltip.trashslot.trash_item"),
+                                        event.getMouseX(),
+                                        event.getMouseY());
+                    }
+                }
             }
         }
 
