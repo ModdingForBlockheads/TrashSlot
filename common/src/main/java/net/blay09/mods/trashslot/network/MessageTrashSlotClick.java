@@ -3,6 +3,8 @@ package net.blay09.mods.trashslot.network;
 import net.blay09.mods.balm.api.Balm;
 import net.blay09.mods.trashslot.TrashHelper;
 import net.blay09.mods.trashslot.TrashSlot;
+import net.blay09.mods.trashslot.api.ItemAddedToTrashSlotEvent;
+import net.blay09.mods.trashslot.api.ItemRemovedFromTrashSlotEvent;
 import net.blay09.mods.trashslot.config.TrashSlotConfig;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -58,10 +60,12 @@ public class MessageTrashSlotClick implements CustomPacketPayload {
                 ItemStack mouseStack = message.isRightClick ? trashStack.split(1) : trashStack;
                 player.containerMenu.setCarried(mouseStack);
                 TrashHelper.setTrashItem(player, message.isRightClick ? trashStack : ItemStack.EMPTY);
+                Balm.getEvents().fireEvent(new ItemRemovedFromTrashSlotEvent(player, mouseStack));
             } else {
                 ItemStack trashStack = message.isRightClick ? actualMouseItem.split(1) : actualMouseItem;
                 TrashHelper.setTrashItem(player, trashStack);
                 player.containerMenu.setCarried(message.isRightClick ? actualMouseItem : ItemStack.EMPTY);
+                Balm.getEvents().fireEvent(new ItemAddedToTrashSlotEvent(player, trashStack));
             }
         }
     }
