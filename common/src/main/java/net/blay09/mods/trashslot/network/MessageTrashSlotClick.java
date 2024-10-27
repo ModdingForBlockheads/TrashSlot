@@ -3,8 +3,8 @@ package net.blay09.mods.trashslot.network;
 import net.blay09.mods.balm.api.Balm;
 import net.blay09.mods.trashslot.TrashHelper;
 import net.blay09.mods.trashslot.TrashSlot;
-import net.blay09.mods.trashslot.api.ItemAddedToTrashSlotEvent;
-import net.blay09.mods.trashslot.api.ItemRemovedFromTrashSlotEvent;
+import net.blay09.mods.trashslot.api.ItemTrashedEvent;
+import net.blay09.mods.trashslot.api.ItemUntrashedEvent;
 import net.blay09.mods.trashslot.config.TrashSlotConfig;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -48,7 +48,7 @@ public class MessageTrashSlotClick implements CustomPacketPayload {
             return;
         }
 
-        ItemStack actualMouseItem = player.containerMenu.getCarried();
+        ItemStack actualMouseItem = player.containerMenu.getCarried().copy();
         var registryName = Balm.getRegistries().getKey(actualMouseItem.getItem());
         if (registryName != null && TrashSlotConfig.getActive().deletionDenyList.contains(registryName.toString())) {
             return;
@@ -60,12 +60,17 @@ public class MessageTrashSlotClick implements CustomPacketPayload {
                 ItemStack mouseStack = message.isRightClick ? trashStack.split(1) : trashStack;
                 player.containerMenu.setCarried(mouseStack);
                 TrashHelper.setTrashItem(player, message.isRightClick ? trashStack : ItemStack.EMPTY);
-                Balm.getEvents().fireEvent(new ItemRemovedFromTrashSlotEvent(player, mouseStack));
+                Balm.getEvents().fireEvent(new ItemUntrashedEvent(player, mouseStack));
             } else {
                 ItemStack trashStack = message.isRightClick ? actualMouseItem.split(1) : actualMouseItem;
+                final var preEvent = new ItemTrashedEvent.Pre(player, trashStack);
+                Balm.getEvents().fireEvent(preEvent);
+                if (preEvent.isCanceled()) {
+                    return;
+                }
                 TrashHelper.setTrashItem(player, trashStack);
                 player.containerMenu.setCarried(message.isRightClick ? actualMouseItem : ItemStack.EMPTY);
-                Balm.getEvents().fireEvent(new ItemAddedToTrashSlotEvent(player, trashStack));
+                Balm.getEvents().fireEvent(new ItemTrashedEvent.Post(player, trashStack));
             }
         }
     }

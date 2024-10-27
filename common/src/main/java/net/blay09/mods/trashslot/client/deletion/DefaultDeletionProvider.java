@@ -1,8 +1,8 @@
 package net.blay09.mods.trashslot.client.deletion;
 
 import net.blay09.mods.balm.api.Balm;
-import net.blay09.mods.trashslot.api.ItemAddedToTrashSlotEvent;
-import net.blay09.mods.trashslot.api.ItemRemovedFromTrashSlotEvent;
+import net.blay09.mods.trashslot.api.ItemTrashedEvent;
+import net.blay09.mods.trashslot.api.ItemUntrashedEvent;
 import net.blay09.mods.trashslot.api.TrashSlotEmptiedEvent;
 import net.blay09.mods.trashslot.network.MessageDeleteFromSlot;
 import net.blay09.mods.trashslot.network.MessageTrashSlotClick;
@@ -20,7 +20,7 @@ public class DefaultDeletionProvider implements DeletionProvider {
         player.containerMenu.setCarried(mouseStack);
         trashSlot.set(isRightClick ? trashStack : ItemStack.EMPTY);
         Balm.getNetworking().sendToServer(new MessageTrashSlotClick(ItemStack.EMPTY, isRightClick));
-        Balm.getEvents().fireEvent(new ItemRemovedFromTrashSlotEvent(player, mouseStack));
+        Balm.getEvents().fireEvent(new ItemUntrashedEvent(player, mouseStack));
     }
 
     @Override
@@ -32,22 +32,35 @@ public class DefaultDeletionProvider implements DeletionProvider {
     public void deleteMouseItem(Player player, ItemStack mouseItem, TrashSlotSlot trashSlot, boolean isRightClick) {
         ItemStack mouseStack = mouseItem.copy();
         ItemStack trashStack = isRightClick ? mouseStack.split(1) : mouseStack;
+        final var preEvent = new ItemTrashedEvent.Pre(player, trashStack);
+        Balm.getEvents().fireEvent(preEvent);
+        if (preEvent.isCanceled()) {
+            return;
+        }
         player.containerMenu.setCarried(isRightClick ? mouseStack : ItemStack.EMPTY);
         trashSlot.set(trashStack);
         Balm.getNetworking().sendToServer(new MessageTrashSlotClick(mouseItem, isRightClick));
-        Balm.getEvents().fireEvent(new ItemAddedToTrashSlotEvent(player, trashStack));
+        Balm.getEvents().fireEvent(new ItemTrashedEvent.Post(player, trashStack));
     }
 
     @Override
     public void deleteContainerItem(AbstractContainerMenu container, int slotNumber, boolean isDeleteAll, TrashSlotSlot slotTrash) {
+        final var player = Minecraft.getInstance().player;
+        final var itemStack = container.getSlot(slotNumber).getItem();
+        final var preEvent = new ItemTrashedEvent.Pre(player, itemStack);
+        Balm.getEvents().fireEvent(preEvent);
+        if (preEvent.isCanceled()) {
+            return;
+        }
         Balm.getNetworking().sendToServer(new MessageDeleteFromSlot(slotNumber, isDeleteAll));
-        Balm.getEvents().fireEvent(new ItemAddedToTrashSlotEvent(Minecraft.getInstance().player, container.getSlot(slotNumber).getItem()));
+        Balm.getEvents().fireEvent(new ItemTrashedEvent.Post(player, itemStack));
     }
 
     @Override
     public void emptyTrashSlot(TrashSlotSlot trashSlot) {
+        final var itemStack = trashSlot.getItem();
         trashSlot.set(ItemStack.EMPTY);
         Balm.getNetworking().sendToServer(new MessageDeleteFromSlot(-1, false));
-        Balm.getEvents().fireEvent(new TrashSlotEmptiedEvent(Minecraft.getInstance().player));
+        Balm.getEvents().fireEvent(new TrashSlotEmptiedEvent(Minecraft.getInstance().player, itemStack));
     }
 }

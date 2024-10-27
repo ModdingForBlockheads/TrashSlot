@@ -3,7 +3,7 @@ package net.blay09.mods.trashslot.network;
 import net.blay09.mods.balm.api.Balm;
 import net.blay09.mods.trashslot.TrashHelper;
 import net.blay09.mods.trashslot.TrashSlot;
-import net.blay09.mods.trashslot.api.ItemAddedToTrashSlotEvent;
+import net.blay09.mods.trashslot.api.ItemTrashedEvent;
 import net.blay09.mods.trashslot.api.TrashSlotEmptiedEvent;
 import net.blay09.mods.trashslot.config.TrashSlotConfig;
 import net.minecraft.network.FriendlyByteBuf;
@@ -46,9 +46,10 @@ public class MessageDeleteFromSlot implements CustomPacketPayload {
         }
 
         if (message.slotNumber == -1) {
+            final var itemStack = TrashHelper.getTrashItem(player);
             TrashHelper.setTrashItem(player, ItemStack.EMPTY);
             Balm.getNetworking().reply(new MessageTrashSlotContent(ItemStack.EMPTY));
-            Balm.getEvents().fireEvent(new TrashSlotEmptiedEvent(player));
+            Balm.getEvents().fireEvent(new TrashSlotEmptiedEvent(player, itemStack));
             return;
         }
 
@@ -92,10 +93,12 @@ public class MessageDeleteFromSlot implements CustomPacketPayload {
 
         container.clicked(slotNumber, 0, ClickType.PICKUP, player);
         ItemStack mouseStack = container.getCarried();
-        if (ItemStack.matches(itemStack, mouseStack)) {
+        final var preEvent = new ItemTrashedEvent.Pre(player, mouseStack);
+        Balm.getEvents().fireEvent(preEvent);
+        if (!preEvent.isCanceled() && ItemStack.matches(itemStack, mouseStack)) {
             container.setCarried(ItemStack.EMPTY);
             TrashHelper.setTrashItem(player, mouseStack);
-            Balm.getEvents().fireEvent(new ItemAddedToTrashSlotEvent(player, mouseStack));
+            Balm.getEvents().fireEvent(new ItemTrashedEvent.Post(player, mouseStack));
             return !itemStack.isEmpty();
         } else {
             // Abort mission - something went weirdly wrong - sync the current mouse item to prevent desyncs
