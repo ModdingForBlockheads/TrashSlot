@@ -4,13 +4,9 @@ Minecraft Mod. Adds a trash slot to the inventory screen that allows deletion of
 
 - [Modpack Permissions](https://mods.twelveiterations.com/permissions)
 
-#### Forge
+#### Downloads
 
 [![Versions](http://cf.way2muchnoise.eu/versions/235577_latest.svg)](https://minecraft.curseforge.com/projects/trashslot) [![Downloads](http://cf.way2muchnoise.eu/full_235577_downloads.svg)](https://minecraft.curseforge.com/projects/trashslot)
-
-#### Fabric
-
-[![Versions](http://cf.way2muchnoise.eu/versions/547689_latest.svg)](https://www.curseforge.com/minecraft/mc-mods/trashslot-fabric-edition) [![Downloads](http://cf.way2muchnoise.eu/full_547689_downloads.svg)](https://www.curseforge.com/minecraft/mc-mods/trashslot-fabric-edition)
 
 ## Contributing
 
