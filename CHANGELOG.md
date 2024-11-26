@@ -1,2 +1,1 @@
-- Added "Trash Item" tooltip to the trash slot
-- Added ItemTrashedEvent.Pre, ItemTrashedEvent.Post, ItemUntrashedEvent and TrashSlotEmptiedEvent to the API
+- Updated to Minecraft 1.21.4
