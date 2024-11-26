@@ -1,16 +1,14 @@
 package net.blay09.mods.trashslot.client;
 
-import com.mojang.datafixers.util.Pair;
-import net.blay09.mods.trashslot.TrashSlot;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.Nullable;
 
 public class TrashSlotSlot extends Slot {
+
+    private static final ResourceLocation ICON = ResourceLocation.withDefaultNamespace("container/slot/trashslot");
 
     public static class TrashInventory implements Container {
         private ItemStack currentStack = ItemStack.EMPTY;
@@ -84,16 +82,12 @@ public class TrashSlotSlot extends Slot {
         }
     }
 
-    private final Pair<ResourceLocation, ResourceLocation> backgroundPair;
-
     public TrashSlotSlot() {
         super(new TrashInventory(), 0, 0, 0);
-        backgroundPair = Pair.of(InventoryMenu.BLOCK_ATLAS, ResourceLocation.fromNamespaceAndPath(TrashSlot.MOD_ID, "item/trashcan"));
     }
 
-    @Nullable
     @Override
-    public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
-        return backgroundPair;
+    public ResourceLocation getNoItemIcon() {
+        return ICON;
     }
 }
