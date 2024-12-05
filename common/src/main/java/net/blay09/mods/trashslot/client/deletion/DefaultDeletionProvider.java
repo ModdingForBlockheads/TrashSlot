@@ -7,7 +7,6 @@ import net.blay09.mods.trashslot.api.TrashSlotEmptiedEvent;
 import net.blay09.mods.trashslot.network.MessageDeleteFromSlot;
 import net.blay09.mods.trashslot.network.MessageTrashSlotClick;
 import net.blay09.mods.trashslot.client.TrashSlotSlot;
-import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
@@ -44,23 +43,23 @@ public class DefaultDeletionProvider implements DeletionProvider {
     }
 
     @Override
-    public void deleteContainerItem(AbstractContainerMenu container, int slotNumber, boolean isDeleteAll, TrashSlotSlot slotTrash) {
-        final var player = Minecraft.getInstance().player;
+    public void deleteContainerItem(Player player, AbstractContainerMenu container, int slotNumber, boolean isDeleteAll, TrashSlotSlot slotTrash) {
         final var itemStack = container.getSlot(slotNumber).getItem();
         final var preEvent = new ItemTrashedEvent.Pre(player, itemStack);
         Balm.getEvents().fireEvent(preEvent);
         if (preEvent.isCanceled()) {
             return;
         }
+
         Balm.getNetworking().sendToServer(new MessageDeleteFromSlot(slotNumber, isDeleteAll));
         Balm.getEvents().fireEvent(new ItemTrashedEvent.Post(player, itemStack));
     }
 
     @Override
-    public void emptyTrashSlot(TrashSlotSlot trashSlot) {
+    public void emptyTrashSlot(Player player, TrashSlotSlot trashSlot) {
         final var itemStack = trashSlot.getItem();
         trashSlot.set(ItemStack.EMPTY);
         Balm.getNetworking().sendToServer(new MessageDeleteFromSlot(-1, false));
-        Balm.getEvents().fireEvent(new TrashSlotEmptiedEvent(Minecraft.getInstance().player, itemStack));
+        Balm.getEvents().fireEvent(new TrashSlotEmptiedEvent(player, itemStack));
     }
 }

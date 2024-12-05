@@ -19,12 +19,12 @@ public class CreativeDeletionProvider extends DefaultDeletionProvider {
     @Override
     public void deleteMouseItem(Player player, ItemStack mouseItem, TrashSlotSlot trashSlot, boolean isRightClick) {
         super.deleteMouseItem(player, mouseItem, trashSlot, isRightClick);
-        emptyTrashSlot(trashSlot);
+        emptyTrashSlot(player, trashSlot);
     }
 
     @Override
-    public void deleteContainerItem(AbstractContainerMenu container, int slotNumber, boolean isDeleteAll, TrashSlotSlot trashSlot) {
-        super.deleteContainerItem(container, slotNumber, isDeleteAll, trashSlot);
-        emptyTrashSlot(trashSlot);
+    public void deleteContainerItem(Player player, AbstractContainerMenu container, int slotNumber, boolean isDeleteAll, TrashSlotSlot trashSlot) {
+        super.deleteContainerItem(player, container, slotNumber, isDeleteAll, trashSlot);
+        emptyTrashSlot(player, trashSlot);
     }
 }
