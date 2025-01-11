@@ -1,4 +1,1 @@
-- Added hints for when the trash slot is first toggled off, or when it can be toggled on
-- Added deletionDenyList option, which allows you to specify items that cannot be deleted (default: none)
-- Added keybind for locking the trash slot into place, preventing it from being dragged (default: none)
-- Added allowDeletionWhileTrashSlotIsInvisible option (default: off)
+- Fixed "Press Not Bound to toggle the TrashSlot" hint showing when no toggle key is bound
