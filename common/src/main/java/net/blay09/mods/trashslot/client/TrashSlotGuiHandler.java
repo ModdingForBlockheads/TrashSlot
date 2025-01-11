@@ -1,5 +1,6 @@
 package net.blay09.mods.trashslot.client;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Window;
 import net.blay09.mods.balm.api.Balm;
 import net.blay09.mods.balm.api.event.client.screen.*;
@@ -83,7 +84,9 @@ public class TrashSlotGuiHandler {
             if (currentContainerSettings != ContainerSettings.NONE) {
                 trashSlotComponent = new TrashSlotComponent(screen, layout, currentContainerSettings, trashSlot);
 
-                if (!currentContainerSettings.isEnabled() && !layout.isEnabledByDefault()) {
+                if (!currentContainerSettings.isEnabled() && !layout.isEnabledByDefault() && !ModKeyMappings.keyBindToggleSlot.getBinding()
+                        .key()
+                        .equals(InputConstants.UNKNOWN)) {
                     var hintMessage = Component.translatable("trashslot.hint.toggleOn", ModKeyMappings.keyBindToggleSlot.getBinding().key().getDisplayName());
                     showHint(Hints.TOGGLE_ON, hintMessage, 5000);
                 }
@@ -228,7 +231,7 @@ public class TrashSlotGuiHandler {
         if (screen instanceof AbstractContainerScreen<?> && currentContainerSettings != ContainerSettings.NONE) {
             if (ModKeyMappings.keyBindToggleSlot.isActiveAndMatchesKey(keyCode, scanCode, modifiers)) {
                 currentContainerSettings.setEnabled(!currentContainerSettings.isEnabled());
-                if (!currentContainerSettings.isEnabled()) {
+                if (!currentContainerSettings.isEnabled() && !ModKeyMappings.keyBindToggleSlot.getBinding().key().equals(InputConstants.UNKNOWN)) {
                     var hintMessage = Component.translatable("trashslot.hint.toggledOff", ModKeyMappings.keyBindToggleSlot.getBinding().key().getDisplayName());
                     showHint(Hints.TOGGLED_OFF, hintMessage, 5000);
                 }
