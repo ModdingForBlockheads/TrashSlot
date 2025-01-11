@@ -86,10 +86,8 @@ public class TrashSlotGuiHandler {
             if (currentContainerSettings != ContainerSettings.NONE) {
                 trashSlotComponent = new TrashSlotComponent(screen, layout, currentContainerSettings, trashSlot);
 
-                if (!currentContainerSettings.isEnabled() && !layout.isEnabledByDefault() && !ModKeyMappings.keyBindToggleSlot.getBinding()
-                        .key()
-                        .equals(InputConstants.UNKNOWN)) {
-                    var hintMessage = Component.translatable("trashslot.hint.toggleOn", ModKeyMappings.keyBindToggleSlot.getBinding().key().getDisplayName());
+                if (!currentContainerSettings.isEnabled() && !layout.isEnabledByDefault() && !ModKeyMappings.keyBindToggleSlot.isUnbound()) {
+                    var hintMessage = Component.translatable("trashslot.hint.toggleOn", ModKeyMappings.keyBindToggleSlot.getTranslatedKeyMessage());
                     showHint(Hints.TOGGLE_ON, hintMessage, 5000);
                 }
             } else {
@@ -240,8 +238,8 @@ public class TrashSlotGuiHandler {
         if (screen instanceof AbstractContainerScreen<?> && currentContainerSettings != ContainerSettings.NONE) {
             if (BalmClient.getKeyMappings().isActiveAndMatches(ModKeyMappings.keyBindToggleSlot, type, keyCode, scanCode)) {
                 currentContainerSettings.setEnabled(!currentContainerSettings.isEnabled());
-                if (!currentContainerSettings.isEnabled() && !ModKeyMappings.keyBindToggleSlot.getBinding().key().equals(InputConstants.UNKNOWN)) {
-                    var hintMessage = Component.translatable("trashslot.hint.toggledOff", ModKeyMappings.keyBindToggleSlot.getBinding().key().getDisplayName());
+                if (!currentContainerSettings.isEnabled() && !ModKeyMappings.keyBindToggleSlot.isUnbound()) {
+                    var hintMessage = Component.translatable("trashslot.hint.toggledOff", ModKeyMappings.keyBindToggleSlot.getTranslatedKeyMessage());
                     showHint(Hints.TOGGLED_OFF, hintMessage, 5000);
                 }
                 TrashSlotSaveState.save();
